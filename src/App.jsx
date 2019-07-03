@@ -59,7 +59,7 @@ class App extends Component {
         ...oldMessages, 
         {
             id: generateRandomId(), 
-            username:this.state.currentUser.name,
+            username:this.state.currentUser.name || 'anonymous',
             content: e.target.value
         }]
     this.setState({messages: newMessages})
