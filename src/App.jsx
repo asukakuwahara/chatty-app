@@ -27,8 +27,21 @@ class App extends Component {
 
   }
 
-  componentDidMount() {
+  componentWillMount() {
     console.log("componentDidMount <App />");
+    const ws = new WebSocket('ws://localhost:3001');
+    //   location.origin.replace(/^http(s)?/, "ws$1")
+
+
+    ws.addEventListener('open', () => {
+      console.log('opened');
+      ws.send('hello 123123123');
+      /* ws.send("hello ? server?"); */
+      // sendMsg({content: "hello ? server?",
+              //  type: 'greeting'});
+    });
+
+
     setTimeout(() => {
       console.log("Simulating incoming message");
       const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
