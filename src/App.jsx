@@ -1,92 +1,73 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx'
 import MessageList from './MessageList.jsx';
-import generateRandomId from './generateId.jsx'
+import generateRandomId from './generateId.jsx';
+import uuidv4 from 'uuid/v4';
 
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
+      id: uuidv4(),
       currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          id:"hijijji2",
-          username: "Bob",
-          content: "Has anyone seen my marbles?"
-        },
-        {
-          id:"2233jkjkjl",
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ],
-
+      messages: [],
       loading: true
     }
-
   }
 
-  componentWillMount() {
-    console.log("componentDidMount <App />");
-    const ws = new WebSocket('ws://localhost:3001');
-    //   location.origin.replace(/^http(s)?/, "ws$1")
+  componentDidMount() {
+    this.ws = new WebSocket('ws://localhost:3001');
 
 
-    ws.addEventListener('open', () => {
+    this.ws.addEventListener('open', () => {
       console.log('opened');
-      ws.send('hello 123123123');
-      /* ws.send("hello ? server?"); */
-      // sendMsg({content: "hello ? server?",
-              //  type: 'greeting'});
+      const msg = JSON.stringify({
+        id: this.state.id,
+        currentUser:this.state.currentUser,
+        messages: this.state.messages,
+      })
+      this.setState({ loading:false})
+      this.ws.send(msg);
     });
 
-
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
+    this.ws.addEventListener('message', (message) =>{
+      const newMessage = JSON.parse(message.data);
       const messages = this.state.messages.concat(newMessage)
       this.setState({messages: messages, loading:false})
-    }, 3000);
+    })
   }
-  // addMessage = (e) => {
-  //   console.log(e.parent)
-  //   if(e.target.name === "send"){
-  //     const oldMessages = this.state.messages;
-  //     const newMessages = [
-  //       ...oldMessages, 
-  //       {
-  //           id: generateRandomId(), 
-  //           username:this.state.currentUser.name,
-  //           content: e.target.value
-  //       }]
-  //     this.setState({messages: newMessages})
-  //     e.target.value = "";
-  //   }
-  // }
-
-  addMessage = (e) => {
-    if(e.key === "Enter" ){
-    const oldMessages = this.state.messages;
-    const newMessages = [
-        ...oldMessages, 
-        {
-            id: generateRandomId(), 
-            username:this.state.currentUser.name || 'anonymous',
-            content: e.target.value
-        }]
-    this.setState({messages: newMessages})
-      e.target.value = "";
+  
+  addUser = (e) => {
+    if(e.key === "Enter") {
+      const newUser = {name: e.target.value};
+      this.setState({currentUser: newUser})
     }
   }
 
+
+  addMessage = (e) => {
+    if(e.key === "Enter"){
+      this.setState({})
+    const message = {
+      id: generateRandomId(), 
+      username:this.state.currentUser.name || 'anonymous',
+      content: e.target.value
+    }
+
+    e.target.value = "";
+
+    const msg = JSON.stringify(message)
+    this.ws.send(msg)
+  }
+  }
 
   render()  {
     return (
     <div className="container">
       {this.state.loading ?
       <Loading /> :
-      <HomeScreen currentUser={this.state.currentUser} messages={this.state.messages} addMessage={this.addMessage}/>
+      <HomeScreen currentUser={this.state.currentUser} messages={this.state.messages} addMessage={this.addMessage} addUser={this.addUser}/>
       }
     </div>
     )
@@ -108,7 +89,7 @@ const HomeScreen = (props) => (
     Anonymous1 changed their name to nomnom.
     </div>
   </main>
-    <ChatBar currentUser={props.currentUser} addMessage={props.addMessage}/>
+    <ChatBar currentUser={props.currentUser} addMessage={props.addMessage} addUser={props.addUser}/>
   </div>
 )
 
