@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx'
 import MessageList from './MessageList.jsx';
-import Navbar from './nav.jsx'
 // generates random id
 import uuidv4 from 'uuid/v4';
 

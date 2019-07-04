@@ -12,21 +12,15 @@ const server = express()
   .use(express.static('public'))
   .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
+
+
 // Create the WebSockets server
 const wss = new WebSocket.Server({ server });
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
-  wss.clients.forEach(function each(client) {
-    const userCount = {
-      type: 'userCount',
-      number: wss.clients.size,
-    }
-    client.send(JSON.stringify(userCount))
-  })
-  // console.log(wss.clients.size)
-
+  sendUserCount()
   ws.on('message', (message) =>{
     const msg = JSON.parse(message)
     wss.clients.forEach(function each(client) {
@@ -45,12 +39,17 @@ wss.on('connection', (ws) => {
         client.send(JSON.stringify(msg));
     }
     })
-    console.log(wss.clients.size)
     });
 
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => 
+  sendUserCount()
+  );
+});
+
+//send number of users to app
+const sendUserCount = () =>{
   wss.clients.forEach(function each(client) {
     const userCount = {
       type: 'userCount',
@@ -58,6 +57,4 @@ wss.on('connection', (ws) => {
     }
     client.send(JSON.stringify(userCount))
   })
-
-  );
-});
+}
