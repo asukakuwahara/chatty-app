@@ -7,9 +7,23 @@ const Message = (props) => (
     </div>
 )
 
+const Notification = (props) => (
+    <div className="message system">
+        {props.message.oldUser.name} changed their name to {props.message.currentUser.name}.
+    </div>
+)
+
 const MessageList = (props) => (
     <div>
-    {props.messages.map(message => <Message key={message.id} message={message}/>)}
+    {props.messages.map(message =>{
+    switch(message.type){
+        case('postNotification'):
+        return(<Notification key={message.id}  message={message}/>)
+        case('postMessage'):
+        return (<Message key={message.id} message={message}/>)
+        }
+    } 
+    )}
     </div>
 )
 
