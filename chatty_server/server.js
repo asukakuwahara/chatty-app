@@ -1,7 +1,8 @@
 // server.js
-
+const uuidv4 = require('uuid/v4');
 const express = require('express');
 const WebSocket = require('ws');
+const randomColor = require('randomcolor');
 
 // Set the port to 3001
 const PORT = 3001;
@@ -13,7 +14,7 @@ const server = express()
   .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
 
-
+let idToName = {};
 // Create the WebSockets server
 const wss = new WebSocket.Server({ server });
 // Set up a callback that will run when a client connects to the server
@@ -21,29 +22,54 @@ const wss = new WebSocket.Server({ server });
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
   sendUserCount()
+  const userId = uuidv4();
   ws.on('message', (message) =>{
     const msg = JSON.parse(message)
+    console.log(msg)
     wss.clients.forEach(function each(client) {
         if (client.readyState == WebSocket.OPEN) {
             switch(msg.type) {
                 case 'postMessage':
-                    msg.type = 'incomingMessage'
+                    msg.id = uuidv4();
+                  // console.log('server'+ msg.id)
+                    msg.type = 'incomingMessage';
+                    if(!idToName[msg.userId]){
+                      idToName.userId = userId;
+                      msg.userId = userId;
+                      msg.color = randomColor();
+                    }
                     break;
                 case 'postNotification':
+                    msg.id = uuidv4(),
                     msg.type = 'incomingNotification'
+                    console.log('does this exist' + idToName[msg.userId])
+                    // console.log(msg.userId)
+                    if(!idToName[msg.userId]){
+                      idToName.userId = userId;
+                      msg.userId = userId;
+                      msg.color = randomColor();
+                    }
                     break;
+                case 'incomingMessage':
+                    console.log('what is in it'+ msg.id)
+                    break;
+                case 'incomingNotification':
+                    console.log('Why is this happening' + msg)
+                    break;
+
                 default: 
                   // show an error in the console if the message type is unknown
-                  throw new Error('Unknown event type ' + msg.type);
+                  throw new Error('Unknown event type on server ' + msg.type);
             }
-        client.send(JSON.stringify(msg));
-    }
+          client.send(JSON.stringify(msg));
+        }
     })
     });
 
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => 
+  delete idToName[userId],
   sendUserCount()
   );
 });

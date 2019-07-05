@@ -1,11 +1,13 @@
 import React from 'react';
 
-const Message = (props) => (
-    <div className="message">
-    <span className="message-username">{props.message.username}</span>
+const Message = (props) => {
+    const style = {color: props.message.color}
+    return (<div className="message">
+    <span className="message-username" style= {style}>{props.message.username}</span>
+    <span className="message-date">{props.message.date}</span>    
     <span className="message-content">{props.message.content}</span>
-    </div>
-)
+    </div>)
+}
 
 const Notification = (props) => (
     <div className="message system">
@@ -17,9 +19,9 @@ const MessageList = (props) => (
     <div>
     {props.messages.map(message =>{
     switch(message.type){
-        case('postNotification'):
+        case('incomingNotification'):
         return(<Notification key={message.id}  message={message}/>)
-        case('postMessage'):
+        case('incomingMessage'):
         return (<Message key={message.id} message={message}/>)
         }
     } 

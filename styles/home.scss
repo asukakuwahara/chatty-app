@@ -7,7 +7,7 @@ body {
   background: white;
   color: black;
   font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
   margin: 70px 0;
 }
 
@@ -71,6 +71,7 @@ body {
   border-bottom: 1px solid black;
   height: 60px;
   left: 0;
+  display: flex;
   padding: 0 10px;
   position: fixed;
   right: 0;
@@ -79,16 +80,25 @@ body {
 
 .navbar-brand {
   color: inherit;
-  display: block;
-  float: left;
   font-weight: 700;
   font-size: 28px;
   height: 60px;
   line-height: 60px;
   padding: 0 10px;
   text-decoration: none;
+  flex: 3;
 }
 
+.user-count{
+  font-size: 20px;
+  height: 60px;
+  line-height: 60px;
+  padding: 0 10px;
+  text-decoration: none;
+  flex: 1;
+  
+
+}
 .send-button {
   background-color: aliceblue;
   height:40px;
