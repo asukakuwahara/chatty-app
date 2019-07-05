@@ -14,8 +14,6 @@ const server = express()
   .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
 
-let idToName = [];
-let color = {};
 // Create the WebSockets server
 const wss = new WebSocket.Server({ server });
 // Set up a callback that will run when a client connects to the server
@@ -29,45 +27,16 @@ wss.on('connection', (ws) => {
   }
   ws.send(JSON.stringify(userColor))
 
-  const userId = uuidv4();
   ws.on('message', (message) =>{
-
     const msg = JSON.parse(message)
-    wss.clients.forEach(function each(client) {
-
-        if (client.readyState == WebSocket.OPEN) {
             switch(msg.type) {
                 case 'postMessage':
                     msg.id = uuidv4();
                     msg.type = 'incomingMessage';
-                    // if(color[msg.color]){
-                    //   console.log(color[msg.color])
-                    //   console.log('color exist!')
-                    // } else {     
-                    //   idToName.userId = userId;
-                    //   msg.userId = userId;
-                    //   let userColor = randomColor();
-                    //   msg.color = userColor;
-                    //   color.userColor = userColor;
-                    //   console.log('inside color obj'+ color[msg.color])
-                    //   console.log(msg.color)
-                    // }
                     break;
                 case 'postNotification':
                     msg.id = uuidv4(),
                     msg.type = 'incomingNotification'
-                    // console.log('does this exist' + idToName[msg.userId])
-                    // if(color[msg.color]){
-                    //   console.log(color[msg.color])
-                    //   console.log('color exist!')
-                    // } else {     
-                    //   idToName.userId = userId;
-                    //   msg.userId = userId;
-                    //   msg.color = randomColor();
-                    //   color.userColor = msg.color;
-                    //   console.log('inside color obj'+ color)
-                    //   console.log(msg.color)
-                    // }
                     break;
                 case 'incomingMessage':
                     console.log('wrong incoming Message'+ msg.id)
@@ -80,15 +49,17 @@ wss.on('connection', (ws) => {
                   // show an error in the console if the message type is unknown
                   throw new Error('Unknown event type on server ' + msg.type);
             }
+    wss.clients.forEach(function each(client) {
+      if (client.readyState == WebSocket.OPEN) {
           client.send(JSON.stringify(msg));
         }
-    })
-    });
+      })
+  });
 
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => 
-  delete idToName[userId],
+  // delete idToName[userId],
   sendUserCount()
   );
 });
@@ -98,11 +69,8 @@ const sendUserCount = () =>{
   wss.clients.forEach(function each(client) {
     const userCount = {
       type: 'userCount',
-      number: wss.clients.size,
+      number: wss.clients.size
     }
     client.send(JSON.stringify(userCount))
   })
 }
-// const sendUserColor = () =>{
-
-// }

@@ -16,12 +16,11 @@ class App extends Component {
 
   componentDidMount() {
     this.ws = new WebSocket('ws://localhost:3001');
-    this.setState({ loading:false})
+    this.setState({ loading:false })
 
     this.ws.addEventListener('message', (message) =>{
       let messages;
       const msg = JSON.parse(message.data);
-      console.log('App'+ msg.userId)
 
       switch(msg.type) {
         case 'incomingMessage':
@@ -72,13 +71,12 @@ class App extends Component {
         date: date1,
         color: this.state.color
       })
-      // console.log('appside'+ message)
       e.target.value = "";
       this.ws.send(message)
     }
   }
 
-  render()  {;
+  render()  {
 
     return (
     <div className="container">
