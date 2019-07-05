@@ -14,7 +14,8 @@ const server = express()
   .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
 
-let idToName = {};
+let idToName = [];
+let color = {};
 // Create the WebSockets server
 const wss = new WebSocket.Server({ server });
 // Set up a callback that will run when a client connects to the server
@@ -22,39 +23,57 @@ const wss = new WebSocket.Server({ server });
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
   sendUserCount()
+  const userColor = {
+    type: 'userColor',
+    color: randomColor(),
+  }
+  ws.send(JSON.stringify(userColor))
+
   const userId = uuidv4();
   ws.on('message', (message) =>{
+
     const msg = JSON.parse(message)
-    console.log(msg)
     wss.clients.forEach(function each(client) {
+
         if (client.readyState == WebSocket.OPEN) {
             switch(msg.type) {
                 case 'postMessage':
                     msg.id = uuidv4();
-                  // console.log('server'+ msg.id)
                     msg.type = 'incomingMessage';
-                    if(!idToName[msg.userId]){
-                      idToName.userId = userId;
-                      msg.userId = userId;
-                      msg.color = randomColor();
-                    }
+                    // if(color[msg.color]){
+                    //   console.log(color[msg.color])
+                    //   console.log('color exist!')
+                    // } else {     
+                    //   idToName.userId = userId;
+                    //   msg.userId = userId;
+                    //   let userColor = randomColor();
+                    //   msg.color = userColor;
+                    //   color.userColor = userColor;
+                    //   console.log('inside color obj'+ color[msg.color])
+                    //   console.log(msg.color)
+                    // }
                     break;
                 case 'postNotification':
                     msg.id = uuidv4(),
                     msg.type = 'incomingNotification'
-                    console.log('does this exist' + idToName[msg.userId])
-                    // console.log(msg.userId)
-                    if(!idToName[msg.userId]){
-                      idToName.userId = userId;
-                      msg.userId = userId;
-                      msg.color = randomColor();
-                    }
+                    // console.log('does this exist' + idToName[msg.userId])
+                    // if(color[msg.color]){
+                    //   console.log(color[msg.color])
+                    //   console.log('color exist!')
+                    // } else {     
+                    //   idToName.userId = userId;
+                    //   msg.userId = userId;
+                    //   msg.color = randomColor();
+                    //   color.userColor = msg.color;
+                    //   console.log('inside color obj'+ color)
+                    //   console.log(msg.color)
+                    // }
                     break;
                 case 'incomingMessage':
-                    console.log('what is in it'+ msg.id)
+                    console.log('wrong incoming Message'+ msg.id)
                     break;
                 case 'incomingNotification':
-                    console.log('Why is this happening' + msg)
+                    console.log('wrong incoming notification' + msg)
                     break;
 
                 default: 
@@ -84,3 +103,6 @@ const sendUserCount = () =>{
     client.send(JSON.stringify(userCount))
   })
 }
+// const sendUserColor = () =>{
+
+// }

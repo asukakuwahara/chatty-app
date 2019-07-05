@@ -35,8 +35,8 @@ class App extends Component {
         case 'userCount':
             this.setState({userOnline: msg.number})
             break;
-        case 'color':
-            this.setState({color:msg.color})
+        case 'userColor':
+            this.setState({color: msg.color})
         default: 
           // show an error in the console if the message type is unknown
           throw new Error("Unknown event type on app" + msg.type);
@@ -70,6 +70,7 @@ class App extends Component {
         username:this.state.currentUser.name || 'anonymous',
         content: e.target.value,
         date: date1,
+        color: this.state.color
       })
       // console.log('appside'+ message)
       e.target.value = "";
@@ -85,7 +86,6 @@ class App extends Component {
       <Loading /> :
       <HomeScreen 
       currentUser={this.state.currentUser} 
-      // oldUser={this.state.oldUser}
       messages={this.state.messages} 
       addMessage={this.addMessage} 
       addUser={this.addUser}
