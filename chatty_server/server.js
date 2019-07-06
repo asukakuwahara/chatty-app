@@ -38,17 +38,11 @@ wss.on('connection', (ws) => {
                     msg.id = uuidv4(),
                     msg.type = 'incomingNotification'
                     break;
-                case 'incomingMessage':
-                    console.log('wrong incoming Message'+ msg.id)
-                    break;
-                case 'incomingNotification':
-                    console.log('wrong incoming notification' + msg)
-                    break;
-
                 default: 
                   // show an error in the console if the message type is unknown
                   throw new Error('Unknown event type on server ' + msg.type);
             }
+    //send message to each client
     wss.clients.forEach(function each(client) {
       if (client.readyState == WebSocket.OPEN) {
           client.send(JSON.stringify(msg));
@@ -59,12 +53,11 @@ wss.on('connection', (ws) => {
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => 
-  // delete idToName[userId],
   sendUserCount()
   );
 });
 
-//send number of users to app
+//function to send number of users to client
 const sendUserCount = () =>{
   wss.clients.forEach(function each(client) {
     const userCount = {

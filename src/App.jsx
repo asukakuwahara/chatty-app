@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx'
 import MessageList from './MessageList.jsx';
+import Navbar from './nav.jsx'
 
 class App extends Component {
   constructor() {
@@ -44,7 +45,7 @@ class App extends Component {
   }
   
   addUser = (e) => {
-    if(e.key === "Enter") {
+    if(e.key === "Enter" && e.target.value) {
       const newUser = {name: e.target.value};
       const newType = "postNotification"
       this.setState({ 
@@ -59,14 +60,14 @@ class App extends Component {
     }
   }
   addMessage = (e) => {
-    if(e.key === "Enter"){
+    if(e.key === "Enter" && e.target.value){
       let date1 = new Date();
       let date = date1.toDateString()
       let time = date1.toLocaleTimeString();
       date1 = time + ' ' + date;
       const message = JSON.stringify({
         type: "postMessage",
-        username:this.state.currentUser.name || 'anonymous',
+        username:this.state.currentUser.name || 'Anonymous',
         content: e.target.value,
         date: date1,
         color: this.state.color
@@ -101,10 +102,7 @@ const Loading = (props) => (
 
 const HomeScreen = (props) => (
   <div className="container">
-    <nav className="navbar">
-        <a href="/" className="navbar-brand">Chatty</a>
-        <div className="user-count">{props.userOnline}users online</div>
-    </nav>
+  <Navbar userOnline={props.userOnline} />
   <main className="messages">
     <MessageList messages={props.messages}/>
   </main>
