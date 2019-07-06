@@ -14,7 +14,7 @@ class App extends Component {
       color: ''
     }
   }
-
+  //shows home screen when loading ends
   componentDidMount() {
     this.ws = new WebSocket('ws://localhost:3001');
     this.setState({ loading:false })

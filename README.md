@@ -1,7 +1,8 @@
 Chatty
+=====================
 
 Chatty is a real-time interactive online chat application. Chatty will allow users to communicate with each other without having to register accounts. 
-=====================
+
 
 ### Getting started
 1. Fork this repository, then clone your fork of this repository.
